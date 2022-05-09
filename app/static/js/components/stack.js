@@ -10,12 +10,16 @@ class Gallery {
         this.boxWidth = bw;
         this.boxHeight = bh;
 
+
+
         let stack = Composites.stack(x, y, nx, ny, w, h, function(x, y) {
             let options = {
                 chamfer: { radius:10 },
                 render: {
                     sprite: {
-                        texture: "images/forest [1].png",
+                        texture: './static/upload/box.png',
+                        xScale: 0.5,
+                        yScale: 0.5
                     }
                 }
             }

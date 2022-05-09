@@ -11,12 +11,8 @@ var Engine = Matter.Engine,
 var width = window.innerWidth, height = window.innerHeight;
     
 // Engine
-let engine = Engine.create({
-  render: {
-    element: document.body,
-  }
-});
-var world = engine.world;
+var engine = Engine.create(),
+  world = engine.world;
 world.gravity.y = 0;
 
 
@@ -24,10 +20,28 @@ world.gravity.y = 0;
 let render = Render.create({
   element: document.body,
   engine: engine,
+  options:
+  {
+    wireframes: false,
+  }
 });
 
 render.canvas.width = width
 render.canvas.height = height
+
+Render.run(render);
+
+// Runner
+var runner = Matter.Runner.create();
+Runner.run(runner, engine);
+
+// Bodies
+new Boundary(width/2,height,width,40) // bottom
+new Boundary(width/2,0,width,40) // top
+new Boundary(0,height/2,40,height) // left
+new Boundary(width,height/2,40,height) // right
+
+new Gallery(width/2-290, height/2-230, 3, 3, 50, 50, 160, 120);
 
 // Mouse
 let mouse = Mouse.create(render.canvas);
@@ -42,17 +56,4 @@ let mouseConstraint = MouseConstraint.create(engine, {
 render.mouse = mouse;
 World.add(world, mouseConstraint);
 
-// Bodies
-new Boundary(width/2,height,width,40) // bottom
-new Boundary(width/2,0,width,40) // top
-new Boundary(0,height/2,40,height) // left
-new Boundary(width,height/2,40,height) // right
 
-new Gallery(width/2-290, height/2-230, 3, 3, 50, 50, 160, 120);
-
-// Render
-Render.run(render);
-
-// Runner
-var runner = Matter.Runner.create();
-Runner.run(runner, engine);
