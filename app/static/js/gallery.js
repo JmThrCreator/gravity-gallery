@@ -1,12 +1,12 @@
 // Setup
 var Engine = Matter.Engine,
-    Bodies = Matter.Bodies,
-    World = Matter.World,
-    Composites = Matter.Composites,
-    MouseConstraint = Matter.MouseConstraint,
-    Mouse = Matter.Mouse,
-    Render = Matter.Render,
-    Runner = Matter.Runner
+  Bodies = Matter.Bodies,
+  World = Matter.World,
+  Composites = Matter.Composites,
+  MouseConstraint = Matter.MouseConstraint,
+  Mouse = Matter.Mouse,
+  Render = Matter.Render,
+  Runner = Matter.Runner
 
 var width = window.innerWidth, height = window.innerHeight;
     

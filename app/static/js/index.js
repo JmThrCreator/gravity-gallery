@@ -1,7 +1,6 @@
 // check if gravity-on has been pressed
 window.onclick = function(event) {
     var targetId = event.target.id;
-    console.log(targetId);
     if (targetId == "gravity") {
         var gravityOn = document.getElementById("gravity");
         if (gravityOn.className == "bi bi-arrow-down-circle") {
