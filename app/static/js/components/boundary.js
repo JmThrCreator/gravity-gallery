@@ -9,8 +9,6 @@ class Boundary {
         }
 
         this.body = Bodies.rectangle(x, y, w, h, options);
-        this.width = w;
-        this.height = h;
         World.add(world, this.body);
     }
 }

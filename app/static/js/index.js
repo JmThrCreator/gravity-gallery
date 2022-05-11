@@ -1,59 +1,31 @@
-// Setup
-var Engine = Matter.Engine,
-    Bodies = Matter.Bodies,
-    World = Matter.World,
-    Composites = Matter.Composites,
-    MouseConstraint = Matter.MouseConstraint,
-    Mouse = Matter.Mouse,
-    Render = Matter.Render,
-    Runner = Matter.Runner
-
-var width = window.innerWidth, height = window.innerHeight;
-    
-// Engine
-var engine = Engine.create(),
-  world = engine.world;
-world.gravity.y = 0;
-
-
-// Render
-let render = Render.create({
-  element: document.body,
-  engine: engine,
-  options:
-  {
-    wireframes: false,
-  }
-});
-
-render.canvas.width = width
-render.canvas.height = height
-
-Render.run(render);
-
-// Runner
-var runner = Matter.Runner.create();
-Runner.run(runner, engine);
-
-// Bodies
-new Boundary(width/2,height,width,40) // bottom
-new Boundary(width/2,0,width,40) // top
-new Boundary(0,height/2,40,height) // left
-new Boundary(width,height/2,40,height) // right
-
-new Gallery(width/2-290, height/2-230, 3, 3, 50, 50, 160, 120);
-
-// Mouse
-let mouse = Mouse.create(render.canvas);
-let mouseConstraint = MouseConstraint.create(engine, {
-  mouse: mouse,
-  constraint: {
-    render: {
-      visible: false
+// check if gravity-on has been pressed
+window.onclick = function(event) {
+    var targetId = event.target.id;
+    console.log(targetId);
+    if (targetId == "gravity") {
+        var gravityOn = document.getElementById("gravity");
+        if (gravityOn.className == "bi bi-arrow-down-circle") {
+            gravityOn.className = "bi bi-slash-circle";
+            world.gravity.y = 1;
+        }
+        else if (gravityOn.className == "bi bi-slash-circle") {
+            gravityOn.className = "bi bi-arrow-down-circle";
+            world.gravity.y = 0;
+        }
     }
-  }
-});
-render.mouse = mouse;
-World.add(world, mouseConstraint);
+    else if (targetId == "add-body") {
+        //get random value from paintingList
+        var random = Math.floor(Math.random() * paintingList.length);
+        //create new body
+        var randomX = Math.floor(Math.random() * (width - 100));
 
+        new Box(randomX, 100, paintingList[random].width/2, paintingList[random].height/2, paintingList[random].path);
+    }
+    else if (targetId == "clear-bodies") {
+        clearBodies();
+    }
+    else if (targetId == "reset-bodies") {
+        resetBodies();
+    }
 
+}
