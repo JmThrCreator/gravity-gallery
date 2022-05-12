@@ -2,7 +2,7 @@
 
 {% block script %}
 
-    <script rel="javascript" type="text/javascript" src="static/js/libraries/matter.min.js"></script> <!-- matter.js -->
+    <script rel="javascript" type="text/javascript" src="static/js/libraries/matter.js"></script> <!-- matter.js -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
         var paintingList = {{ paintings|tojson }};
@@ -10,8 +10,9 @@
 
 
     <script src="static/js/components/boundary.js"></script>
-    <script src="static/js/components/box.js"></script>
     <script src="static/js/components/stack.js"></script>
+    <script src="static/js/components/background.js"></script>
+    <script src="static/js/components/box.js"></script>
 
 <script rel="javascript" type="text/javascript" src="static/js/gallery.js"></script>
     <script rel="javascript" type="text/javascript" src="static/js/index.js"></script>
