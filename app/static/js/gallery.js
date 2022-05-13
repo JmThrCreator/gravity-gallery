@@ -175,7 +175,7 @@ window.addEventListener('resize', function () {
   render.canvas.height = height
 
   // Remove boundaries
-  removeBodies(boundaries = true)
+  removeBodies(background = false, gallery = false, boundaries = true)
 
   // Resize background
   let bodies = Matter.Composite.allBodies(engine.world);
