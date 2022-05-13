@@ -66,13 +66,20 @@ Matter.Events.on(mouseConstraint, 'mousemove', function (event) {
   let mousePosition = event.mouse.position;
   let bodies = Matter.Composite.allBodies(engine.world);
   var foundPhysics = Matter.Query.point(bodies, mousePosition);
+
+  var cursor = ""
+
+  for (let i = 0; i < foundPhysics.length; i++) {
+    if (foundPhysics[0] == undefined) cursor = "default"
+    else if (foundPhysics[i].render.sprite.texture == undefined) cursor = "pointer"
+    else if (foundPhysics[i].render.sprite.texture.split('large')[1] == undefined) { cursor = "pointer"; break; }
+    else cursor = "default";
+  }
+
+  document.body.style.cursor = cursor;
   
-  if (foundPhysics[0] != undefined) {
-    document.body.style.cursor = 'pointer';
-  }
-  else {
-    document.body.style.cursor = 'default';
-  }
+
+
 });
 
 // Double click
