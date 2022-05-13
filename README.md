@@ -1,6 +1,6 @@
 # Gravity Gallery
 
-A gallery with physics for artists or photographers showcase their images in a unique way.
+A gallery with physics for artists or photographers showcase their images in a unique way. Made using matter.js.
 
 ## Setup
 
