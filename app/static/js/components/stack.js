@@ -1,6 +1,5 @@
 class Gallery {
     constructor(x, y, nx, ny, w, h, bw, bh) {
-
         var textureList = paintingList;
         
         let stack = Composites.stack(x, y, nx, ny, w, h, function(x, y, ix, iy) {

@@ -1,4 +1,40 @@
-// Setup
+// HTML
+
+// Toggle Buttons
+window.onclick = function(event) {
+  let targetId = event.target.id;
+
+  //toggle gravity
+  if (targetId == "gravity") { 
+    let gravityOn = document.getElementById("gravity");
+
+    if (gravityOn.className == "bi bi-arrow-down-circle") {
+        gravityOn.className = "bi bi-slash-circle";
+        engine.gravity.y = 1;
+    } 
+
+    else if (gravityOn.className == "bi bi-slash-circle") {
+        gravityOn.className = "bi bi-arrow-down-circle";
+        engine.gravity.y = 0;
+    }
+  }
+
+  else if (targetId == "add-body") {
+      let random = Math.floor(Math.random() * paintingList.length);
+      let randomX = Math.floor(Math.random() * (width - 100));
+
+      new Box(randomX, 100, paintingList[random].width/2, paintingList[random].height/2, paintingList[random].path);
+
+  }
+
+  else if (targetId == "clear-bodies") clearBodies();
+   
+  else if (targetId == "reset-bodies")  resetBodies();
+}
+
+// JS
+
+// Matter JS setup
 var Engine = Matter.Engine,
   Bodies = Matter.Bodies,
   World = Matter.World,
@@ -7,17 +43,19 @@ var Engine = Matter.Engine,
   MouseConstraint = Matter.MouseConstraint,
   Mouse = Matter.Mouse,
   Render = Matter.Render,
-  Runner = Matter.Runner
+  Runner = Matter.Runner;
 
-var width = window.innerWidth, height = window.innerHeight;
-    
-// Engine
+var width = window.innerWidth, 
+  height = window.innerHeight;
+
+// engine
 var engine = Engine.create(),
   world = engine.world;
-world.gravity.y = 0;
 
-// Render
-let render = Render.create({
+engine.gravity.y = 0;
+
+// render
+var render = Render.create({
   element: document.body,
   engine: engine,
   options:
@@ -29,23 +67,17 @@ let render = Render.create({
 render.canvas.width = width
 render.canvas.height = height
 render.options.pixelRatio = 1;
-//render.options.background = '#fafafa';
-
 Render.run(render);
 
-// Runner
+// runner
 var runner = Matter.Runner.create();
 Runner.run(runner, engine);
 
-// Bodies
-new Boundary(width/2,height,width,40) // bottom
-new Boundary(width/2,0,width,40) // top
-new Boundary(0,height/2,40,height) // left
-new Boundary(width,height/2,40,height) // right
-
+// bodies
+createBoundaires();
 new Gallery(width/2-290, height/2-230, 3, 3, 50, 50, 160, 120);
 
-// Mouse
+// mouse
 let mouse = Mouse.create(render.canvas);
 let mouseConstraint = MouseConstraint.create(engine, {
   mouse: mouse,
@@ -58,102 +90,113 @@ let mouseConstraint = MouseConstraint.create(engine, {
 render.mouse = mouse;
 World.add(world, mouseConstraint);
 
-// Events
+// Sort z-index by category
+Matter.Events.on(engine.world, "afterAdd", function() {
+  engine.world.bodies.sort((a, b) => {
+      return b.collisionFilter.category - a.collisionFilter.category;
+  });
+});
 
-// Mouse over image
+// Create boundaires
+function createBoundaires() {
+  new Boundary(width/2,height,width,40); // bottom
+  new Boundary(width/2,0,width,40); // top
+  new Boundary(0,height/2,40,height); // left
+  new Boundary(width,height/2,40,height); // right
+}
+
+// EVENTS
+
+// Mouse over image; change cursor
 Matter.Events.on(mouseConstraint, 'mousemove', function (event) {
-
   let mousePosition = event.mouse.position;
   let bodies = Matter.Composite.allBodies(engine.world);
-  var foundPhysics = Matter.Query.point(bodies, mousePosition);
-
-  var cursor = ""
+  let foundPhysics = Matter.Query.point(bodies, mousePosition);
+  let cursor = ""
 
   for (let i = 0; i < foundPhysics.length; i++) {
-    if (foundPhysics[0] == undefined) cursor = "default"
-    else if (foundPhysics[i].render.sprite.texture == undefined) cursor = "pointer"
-    else if (foundPhysics[i].render.sprite.texture.split('large')[1] == undefined) { cursor = "pointer"; break; }
-    else cursor = "default";
+    let element = foundPhysics[i];
+    
+    if (element == undefined) // not body
+      cursor = "default"
+    
+    else if (element.render.sprite.texture == undefined) // no image
+      cursor = "pointer"
+    
+    else if (element.render.sprite.texture.split('large')[1] == undefined) { // gallery image
+      cursor = "pointer"; 
+      break;
+    }
+    
+    else // background image
+      cursor = "default";
   }
 
   document.body.style.cursor = cursor;
-  
-
-
 });
 
-// Double click
+// Double click; Create background image
 document.addEventListener('dblclick', function(event) {
+  if (event.target.id != "") return; // html button
 
-  // Get value clicked
   let pos = mouse.position;
   let bodies = Matter.Composite.allBodies(engine.world);
-  var foundPhysics = Matter.Query.point(bodies, pos);
+  let foundPhysics = Matter.Query.point(bodies, pos);
+  let body = "";
   
   removeBodies(background = true, gallery = false, boundaries = false);
 
-  if (foundPhysics[0] == undefined) return;
-  else {
+  for (let i = 0; i < foundPhysics.length; i++) {
+    let element = foundPhysics[i];
 
-    // Get body texture
-    let body = foundPhysics[0]
-    let texture = body.render.sprite.texture;
+    if (element == undefined) // not body
+      continue;
+  
+    else if (element.render.sprite.texture == undefined) // no image
+      continue;
+    
+    else if (element.render.sprite.texture.split('large')[1] == undefined) { // gallery image
+      body = element;
+      break;
+    }
 
-    // Get large texture
-    let number = texture.split('.').shift().split('_').pop();
-    let largeTexture = texture.replace("small_" + number, 'large_'+ number);
-    largeTexture = largeTexture.replace("small", 'large');
-
-    // Get width and length
-    let body_width = body.bounds.max.x - body.bounds.min.x;
-    let body_height = body.bounds.max.y - body.bounds.min.y;
-
-    // Create large image
-    new Background(largeTexture, width/2, height/2, body_width, body_height);
+    else // background image
+      continue;
   }
+
+  if (body == "") return; // no gallery image found
+
+  let texture = body.render.sprite.texture;
+
+  // background texture
+  let imageNumber = texture.split('.').shift().split('_').pop();
+  let largeTexture = texture.replace("small_" + imageNumber, 'large_'+ imageNumber);
+  largeTexture = largeTexture.replace("small", 'large');
+
+  // background width and height
+  let body_width = body.bounds.max.x - body.bounds.min.x;
+  let body_height = body.bounds.max.y - body.bounds.min.y;
+
+  new Background(largeTexture, width/2, height/2, body_width, body_height);
 })
 
-// Clear bodies
+// Clear all bodies
 function clearBodies() {
-
-  removeBodies(background = false, gallery = true, boundaries = true);
-  
-  // Bodies
-  new Boundary(width/2,height,width,40) // bottom
-  new Boundary(width/2,0,width,40) // top
-  new Boundary(0,height/2,40,height) // left
-  new Boundary(width,height/2,40,height) // right
-
-  // Mouse
-  let mouse = Mouse.create(render.canvas);
-  let mouseConstraint = MouseConstraint.create(engine, {
-    mouse: mouse,
-    constraint: {
-      render: {
-        visible: false
-      }
-    }
-  });
-  render.mouse = mouse;
-  World.add(world, mouseConstraint);
+  removeBodies(background = false, gallery = true, boundaries = false);
 }
 
 
 // Reset bodies
 function resetBodies() {
-  
-  // Remove all bodies except background
-  removeBodies(background = false, gallery = true, boundaries = true);
-  
-  // Bodies
-  new Boundary(width/2,height,width,40) // bottom
-  new Boundary(width/2,0,width,40) // top
-  new Boundary(0,height/2,40,height) // left
-  new Boundary(width,height/2,40,height) // right
 
+  // remove all bodies except background
+  removeBodies(background = false, gallery = true, boundaries = true); 
+  
+  // bodies
+  createBoundaires();
   new Gallery(width/2-290, height/2-230, 3, 3, 50, 50, 160, 120);
 
-  // Mouse
+  // mouse
   let mouse = Mouse.create(render.canvas);
   let mouseConstraint = MouseConstraint.create(engine, {
     mouse: mouse,
@@ -167,57 +210,48 @@ function resetBodies() {
   World.add(world, mouseConstraint);
 }
 
-// Resize Window
+// Resize window
 window.addEventListener('resize', function () {
   width = window.innerWidth;
   height = window.innerHeight;
-  render.canvas.width = width
-  render.canvas.height = height
+  render.canvas.width = width;
+  render.canvas.height = height;
 
-  // Remove boundaries
-  removeBodies(background = false, gallery = false, boundaries = true)
+  // remove boundaires
+  removeBodies(background = false, gallery = false, boundaries = true);
 
-  // Resize background
+  // resize background
   let bodies = Matter.Composite.allBodies(engine.world);
   for (let i = 0; i < bodies.length; i++) {
     if (bodies[i].render.sprite.texture == undefined) continue;
+
     else if (bodies[i].render.sprite.texture.split('large')[1] != undefined) {
       bodies[i].position.x = width/2;
       bodies[i].position.y = height/2;
     }
   }
 
-  // Recreate bodies
-  new Boundary(width/2,height,width,40) // bottom
-  new Boundary(width/2,0,width,40) // top
-  new Boundary(0,height/2,40,height) // left
-  new Boundary(width,height/2,40,height) // right
+  createBoundaires();
 });
 
+// Remove bodies
 function removeBodies(background = false, gallery = false, boundaries = false) {
-
   let bodies = Matter.Composite.allBodies(engine.world);
+
   for (let i = 0; i < bodies.length; i++) {
-    // No texture = boundaries
-    if (bodies[i].render.sprite.texture == undefined) { 
-      if (boundaries) World.remove(world, bodies[i]) 
+    if (bodies[i].render.sprite.texture == undefined) { // no image = boundaries
+      if (boundaries) 
+        World.remove(world, bodies[i]);
     }
-    // Has large in texture = background
-    else if (bodies[i].render.sprite.texture.split('large')[1] != undefined) { 
-      if (background) World.remove(world, bodies[i]) 
+
+    else if (bodies[i].render.sprite.texture.split('large')[1] != undefined) {  // 'large' in texture = background
+      if (background) 
+        World.remove(world, bodies[i]);
     }
-    // Otherwise = gallery
-    else { 
-      if (gallery) World.remove(world, bodies[i], true) 
+    
+    else {
+      if (gallery) 
+        World.remove(world, bodies[i], true); // gallery
     }
   }
 }
-
-// Sort
-Matter.Events.on(engine.world, "afterAdd", function(items) {
-  engine.world.bodies.sort((a, b) => {
-      return b.collisionFilter.category - a.collisionFilter.category;
-  });
-});
-
-

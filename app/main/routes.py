@@ -4,11 +4,12 @@ from app.utils.load import load_images, get_images
 from config import basedir
 import os
 
-@bp.route("/")
+
+@bp.route("/", methods=["GET", "POST"])
 @bp.route("/index", methods=["GET", "POST"])
-def index():
+def gallery():
 
 	#load_images()
 	paintings = get_images("small")
 	
-	return render_template("index.html", paintings = paintings)
+	return render_template("gallery.html", paintings = paintings)
