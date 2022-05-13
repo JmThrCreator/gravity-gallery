@@ -9,7 +9,7 @@ import os
 @bp.route("/index", methods=["GET", "POST"])
 def gallery():
 
-	#load_images()
+	load_images()
 	paintings = get_images("small")
 	
 	return render_template("gallery.html", paintings = paintings)
