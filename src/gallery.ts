@@ -5,7 +5,7 @@ const imageFiles = import.meta.glob('/public/**/*.{png,PNG,jpg,jpeg}');
 const IMAGES: Array<string> = Object.keys(imageFiles).map(path => path.split('/')[2]);
 const GRAVITY = 0;
 
-var width = window.innerWidth, 
+var width = window.innerWidth,
   height = window.innerHeight;
 
 // Engine
@@ -37,7 +37,7 @@ Runner.run(runner, engine);
 
 const maxHeight = await createGallery(world, width, IMAGES)
 createBoundaires(world, maxHeight)
-render.canvas.height = maxHeight+25;
+render.canvas.height = maxHeight + 25;
 
 
 // Mouse
@@ -50,16 +50,20 @@ let mouseConstraint = MouseConstraint.create(engine, {
     }
   }
 });
+// @ts-ignore
 mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
+// @ts-ignore
 mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
+
 render.mouse = mouse;
 World.add(world, mouseConstraint);
 
 
 // Sort z-index by category
-Events.on(engine.world, "afterAdd", function() {
-  engine.world.bodies.sort((a:Matter.Body, b:Matter.Body) => {
-      return b.collisionFilter.category - a.collisionFilter.category;
+Events.on(engine.world, "afterAdd", function () {
+  engine.world.bodies.sort((a: Matter.Body, b: Matter.Body) => {
+    // @ts-ignore
+    return b.collisionFilter.category - a.collisionFilter.category;
   });
 });
 
