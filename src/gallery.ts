@@ -50,10 +50,10 @@ let mouseConstraint = MouseConstraint.create(engine, {
     }
   }
 });
-// @ts-ignore
-mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
-// @ts-ignore
-mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
+
+mouseConstraint.mouse.element.removeEventListener("mousewheel", (mouseConstraint.mouse as any).mousewheel);
+mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", (mouseConstraint.mouse as any).mousewheel);
+
 
 render.mouse = mouse;
 World.add(world, mouseConstraint);
@@ -62,8 +62,10 @@ World.add(world, mouseConstraint);
 // Sort z-index by category
 Events.on(engine.world, "afterAdd", function () {
   engine.world.bodies.sort((a: Matter.Body, b: Matter.Body) => {
-    // @ts-ignore
-    return b.collisionFilter.category - a.collisionFilter.category;
+    const categoryA = a.collisionFilter?.category ?? 0;
+    const categoryB = b.collisionFilter?.category ?? 0;
+
+    return categoryB - categoryA;
   });
 });
 
