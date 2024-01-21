@@ -1,8 +1,7 @@
 import { Events, Engine, World, Composite, Query, MouseConstraint, Mouse, Render, Runner } from 'matter-js'
 import { createBoundaires, createGallery } from './bodies.ts'
 
-const imageFiles = import.meta.glob('/public/**/*.{png,PNG,jpg,jpeg}');
-const IMAGES: Array<string> = Object.keys(imageFiles).map(path => path.split('/')[2]);
+const IMAGES = ["campfire.jpg", "ice.jpg", "lake.PNG", "levanzo.PNG", "mountain.jpg", "octopus.jpg", "plains.jpg", "ruins.jpg", "slime.jpg", "snow.jpg"]
 const GRAVITY = 0;
 
 var width = window.innerWidth,
