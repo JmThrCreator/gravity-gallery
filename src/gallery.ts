@@ -1,7 +1,7 @@
 import { Events, Engine, World, Composite, Query, MouseConstraint, Mouse, Render, Runner } from 'matter-js'
 import { createBoundaires, createGallery } from './bodies.ts'
 
-const IMAGES = ["campfire.jpg", "ice.jpg", "lake.PNG", "levanzo.PNG", "mountain.jpg", "octopus.jpg", "plains.jpg", "ruins.jpg", "slime.jpg", "snow.jpg"]
+const IMAGES = ["campfire.webp", "ice.webp", "lake.webp", "levanzo.webp", "mountain.webp", "octopus.webp", "plains.webp", "ruins.webp", "slime.webp", "snow.webp"]
 const GRAVITY = 0;
 
 var width = window.innerWidth,
